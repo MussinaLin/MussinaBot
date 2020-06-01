@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
+	"MussinaBot/encryption"
 	"log"
 	"os"
 )
@@ -9,11 +11,19 @@ func main() {
 	key := os.Getenv("key")
 	log.Println("get key:", key)
 	log.Println("Starting the application...")
-	//plaintext := encryption.Decrypt(key, ciphertext)
-	//fmt.Printf("Decrypted: %s\n", plaintext)
 
-	//key := "BmkGCnViEQ_FsFlqdk6li74oDVH41fag7dwdVQt8CIL9FlDst2ebmh_Zm3eXRSN-YxPpf6K4uOLZm74="
-	//secret := "Zhz0MxMkxPQ0VfBai-Wzi6nxPGaCw3bYYxizHzgpFnMpY5Hoa2F0WGWQv66nl6ayrHpSUbO9nIgeISw="
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	
+	encryApiKey := os.Getenv("apiKey")
+	encryApiSecret := os.Getenv("apiSecret")
+	apiKey := encryption.Decrypt(key, encryApiKey)
+	apiKey = apiKey
+	apiSecret := encryption.Decrypt(key, encryApiSecret)
+	apiSecret = apiSecret
+
 	//c := rest.NewClientWithURL("https://api.bitfinex.com/v2/").Credentials(key, secret)
 	//
 	//snapHist, err := c.Funding.OfferHistory("fUSD")
