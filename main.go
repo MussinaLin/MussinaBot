@@ -2,6 +2,7 @@ package main
 
 import (
 	"MussinaBot/utils"
+	"MussinaBot/Bitfinex"
 	"log"
 	"os"
 	"os/signal"
@@ -17,8 +18,11 @@ func main() {
 
 	cfg=cfg
 	// periodic job
-	tick := time.NewTicker(time.Second * 2)
+	tick := time.NewTicker(time.Second * 5)
 	go scheduler(tick)
+
+	Bitfinex.SetConfig(cfg)
+
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	<-sigs
@@ -34,7 +38,7 @@ func main() {
 	//}
 }
 func scheduler(tick *time.Ticker) {
-	for t := range tick.C {
-		log.Println(t)
+	for range tick.C {
+		log.Println(Bitfinex.IsPlatformWorking())
 	}
 }
