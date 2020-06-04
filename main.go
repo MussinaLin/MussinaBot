@@ -1,8 +1,8 @@
 package main
 
 import (
-	"MussinaBot/utils"
 	"MussinaBot/Bitfinex"
+	"MussinaBot/utils"
 	"log"
 	"os"
 	"os/signal"
@@ -18,7 +18,7 @@ func main() {
 
 	cfg=cfg
 	// periodic job
-	tick := time.NewTicker(time.Second * 5)
+	tick := time.NewTicker(time.Second * 3)
 	go scheduler(tick)
 
 	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
@@ -41,6 +41,7 @@ func scheduler(tick *time.Ticker) {
 	for range tick.C {
 		if Bitfinex.IsPlatformWorking(){
 			log.Println("Bitfinex is up...")
+			log.Println("avaliable:", Bitfinex.GetAvaliableBalance())
 		}else{
 			log.Println("Bitfinex is down...")
 		}
