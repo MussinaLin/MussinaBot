@@ -11,6 +11,7 @@ import (
 type Config struct {
 	ApiKey string
 	ApiSecret string
+	PubEndpoint string
 }
 
 func LoadConfig() (*Config, error){
@@ -32,9 +33,11 @@ func LoadConfig() (*Config, error){
 	encryApiSecret := os.Getenv("apiSecret")
 	apiKey := encryption.Decrypt(key, encryApiKey)
 	apiSecret := encryption.Decrypt(key, encryApiSecret)
+	pubEndpoint := os.Getenv("bf.pub.endpoint")
 
 	cfg := &Config{}
 	cfg.ApiKey = apiKey
 	cfg.ApiSecret = apiSecret
+	cfg.PubEndpoint = pubEndpoint
 	return cfg,nil
 }

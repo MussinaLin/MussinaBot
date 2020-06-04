@@ -21,7 +21,7 @@ func main() {
 	tick := time.NewTicker(time.Second * 5)
 	go scheduler(tick)
 
-	Bitfinex.SetConfig(cfg)
+	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
@@ -39,6 +39,10 @@ func main() {
 }
 func scheduler(tick *time.Ticker) {
 	for range tick.C {
-		log.Println(Bitfinex.IsPlatformWorking())
+		if Bitfinex.IsPlatformWorking(){
+			log.Println("Bitfinex is up...")
+		}else{
+			log.Println("Bitfinex is down...")
+		}
 	}
 }
