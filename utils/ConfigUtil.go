@@ -8,13 +8,15 @@ import (
 	"os"
 )
 
+
+
 type Config struct {
 	ApiKey string
 	ApiSecret string
 	PubEndpoint string
 }
 
-func LoadConfig() (*Config, error){
+func LoadConfig(envPath... string) (*Config, error){
 	// get private key from system env
 	key := os.Getenv("key")
 	if len(key) > 0 && key[0] == 'M' {
@@ -24,7 +26,12 @@ func LoadConfig() (*Config, error){
 	}
 
 	// load .env file
-	err := godotenv.Load()
+	var err error = nil
+	if len(envPath) > 0 { //for test case read .env file
+		err = godotenv.Load(envPath[0])
+	}else{
+		err = godotenv.Load()
+	}
 	if err != nil {
 		return nil, fmt.Errorf("Error loading .env file")
 	}
