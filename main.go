@@ -40,7 +40,7 @@ func scheduler(tick *time.Ticker, cfg *utils.Config) {
 	for range tick.C {
 		if Bitfinex.IsPlatformWorking(){
 			log.Println("Bitfinex is up...")
-
+			marginFundingLoan(cfg)
 		}else{
 			log.Println("Bitfinex is down...")
 		}
@@ -51,7 +51,9 @@ func marginFundingLoan(cfg *utils.Config){
 	availBalance := Bitfinex.GetAvaliableBalance()
 	log.Println("available balance:", availBalance)
 	if availBalance < cfg.MinLoan{
-		return
+		//return
 	}
 
+	FRR := Bitfinex.GetFRR(10, cfg.FrrBias)
+	log.Println("FRR:",FRR)
 }

@@ -16,6 +16,7 @@ type Config struct {
 	ApiSecret string
 	PubEndpoint string
 	MinLoan float64
+	FrrBias float64
 }
 
 func LoadConfig(envPath... string) (*Config, error){
@@ -44,13 +45,14 @@ func LoadConfig(envPath... string) (*Config, error){
 	apiSecret := encryption.Decrypt(key, encryApiSecret)
 	pubEndpoint := os.Getenv("bf.pub.endpoint")
 	minLoad := os.Getenv("bf.min.loan")
+	frrBias := os.Getenv("bf.FRR.bias")
 
 	cfg := &Config{}
 	cfg.ApiKey = apiKey
 	cfg.ApiSecret = apiSecret
 	cfg.PubEndpoint = pubEndpoint
 	cfg.MinLoan, _ = strconv.ParseFloat(minLoad, 64)
-
+	cfg.FrrBias, _ = strconv.ParseFloat(frrBias, 64)
 	log.Println("get config succ...")
 	return cfg,nil
 }
