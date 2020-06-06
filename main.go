@@ -16,10 +16,9 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	cfg=cfg
 	// periodic job
 	tick := time.NewTicker(time.Second * 3)
-	go scheduler(tick)
+	go scheduler(tick, cfg)
 
 	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
 
@@ -37,13 +36,22 @@ func main() {
 	//	fmt.Println(item)
 	//}
 }
-func scheduler(tick *time.Ticker) {
+func scheduler(tick *time.Ticker, cfg *utils.Config) {
 	for range tick.C {
 		if Bitfinex.IsPlatformWorking(){
 			log.Println("Bitfinex is up...")
-			log.Println("avaliable:", Bitfinex.GetAvaliableBalance())
+
 		}else{
 			log.Println("Bitfinex is down...")
 		}
 	}
+}
+
+func marginFundingLoan(cfg *utils.Config){
+	availBalance := Bitfinex.GetAvaliableBalance()
+	log.Println("available balance:", availBalance)
+	if availBalance < cfg.MinLoan{
+		return
+	}
+
 }

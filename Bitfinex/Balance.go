@@ -17,5 +17,5 @@ func getFundingWalletAvalBalance(wallets *bitfinex.WalletSnapshot) float64{
 		}
 	}
 	log.Println("[Error] Didn't get funding wallet...")
-	return 0
+	return -1
 }

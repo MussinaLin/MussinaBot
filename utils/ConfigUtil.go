@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"strconv"
 )
 
 
@@ -14,6 +15,7 @@ type Config struct {
 	ApiKey string
 	ApiSecret string
 	PubEndpoint string
+	MinLoan float64
 }
 
 func LoadConfig(envPath... string) (*Config, error){
@@ -41,10 +43,14 @@ func LoadConfig(envPath... string) (*Config, error){
 	apiKey := encryption.Decrypt(key, encryApiKey)
 	apiSecret := encryption.Decrypt(key, encryApiSecret)
 	pubEndpoint := os.Getenv("bf.pub.endpoint")
+	minLoad := os.Getenv("bf.min.loan")
 
 	cfg := &Config{}
 	cfg.ApiKey = apiKey
 	cfg.ApiSecret = apiSecret
 	cfg.PubEndpoint = pubEndpoint
+	cfg.MinLoan, _ = strconv.ParseFloat(minLoad, 64)
+
+	log.Println("get config succ...")
 	return cfg,nil
 }
