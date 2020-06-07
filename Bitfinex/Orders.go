@@ -9,11 +9,21 @@ type MussinaOrder struct{
 
 
 
-func GenOrders(availableBalance float64, maxSignleOrderAmount float64) *[]MussinaOrder{
-	numOfOrders := calNumOfOrders(availableBalance, maxSignleOrderAmount)
-	orders := make([]MussinaOrder, numOfOrders)
-	orders = orders
-	return nil
+func GenOrders(availableBalance float64, maxSignleOrderAmount float64, left float64) int{
+	availableBalance -= left
+	orders := make([]MussinaOrder, 0)
+	num := 0
+	for availableBalance > 0{
+		num++
+		if availableBalance < maxSignleOrderAmount{ // last order
+			availableBalance = 0
+			orders= append(orders, MussinaOrder{Amount:availableBalance, Rate:0})
+		}else{
+			availableBalance -= maxSignleOrderAmount
+			orders= append(orders, MussinaOrder{Amount:maxSignleOrderAmount, Rate:0})
+		}
+	}
+	return num
 }
 
 func calNumOfOrders(availableBalance float64, maxSignleOrderAmount float64) int64{
