@@ -3,6 +3,7 @@ package main
 import (
 	"MussinaBot/Bitfinex"
 	"MussinaBot/utils"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -53,9 +54,9 @@ func marginFundingLoan(cfg *utils.Config){
 	if availBalance < cfg.MinLoan{
 		//return
 	}
-
+	availBalance = 6690
 	FRR := Bitfinex.GetFRR(10, cfg.FrrBias)
-	log.Println("FRR:",FRR)
-
-	Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
+	orders := Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
+	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
+	fmt.Println(orders)
 }

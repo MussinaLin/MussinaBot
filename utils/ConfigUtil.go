@@ -19,6 +19,7 @@ type Config struct {
 	BalanceLeft float64
 	FrrBias float64
 	FrrLoanMonthRate float64
+	FrrIncreaseRate float64
 	MaxSingleOrderAmount float64
 }
 
@@ -56,6 +57,7 @@ func LoadConfig(envPath... string) (*Config, error){
 	//FRR
 	frrBias := os.Getenv("bf.FRR.bias")
 	frrLoanMonthRate := os.Getenv("bf.FRR.loan.month")
+	frrIncreaseRate := os.Getenv("bf.FRR.increasing.rate")
 
 	// order
 	maxSingleOrderAmount := os.Getenv("bf.order.single.max.amount")
@@ -67,6 +69,7 @@ func LoadConfig(envPath... string) (*Config, error){
 	cfg.MinLoan, _ = strconv.ParseFloat(minLoad, 64)
 	cfg.FrrBias, _ = strconv.ParseFloat(frrBias, 64)
 	cfg.FrrLoanMonthRate, _ = strconv.ParseFloat(frrLoanMonthRate, 64)
+	cfg.FrrIncreaseRate, _ = strconv.ParseFloat(frrIncreaseRate, 64)
 	cfg.BalanceLeft, _ = strconv.ParseFloat(balanceLeft, 64)
 	cfg.MaxSingleOrderAmount, _ = strconv.ParseFloat(maxSingleOrderAmount, 64)
 	log.Println("get config succ...")

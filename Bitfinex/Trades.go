@@ -1,6 +1,7 @@
 package Bitfinex
 
 import (
+	"fmt"
 	"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"log"
 	"math"
@@ -8,6 +9,7 @@ import (
 )
 
 func GetFRR(priorMinutes int32, frrBias float64) float64{
+	log.Println(fmt.Sprintf("[GetFRR] priorMinutes:%d, frrBias:%f", priorMinutes, frrBias))
 	trades := getTradeHistory(priorMinutes)
 	size := len(trades.Snapshot)
 	var FRR float64 = 0
