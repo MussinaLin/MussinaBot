@@ -16,7 +16,9 @@ type Config struct {
 	ApiSecret string
 	PubEndpoint string
 	MinLoan float64
+	BalanceLeft float64
 	FrrBias float64
+	MaxSingleOrderAmount float64
 }
 
 func LoadConfig(envPath... string) (*Config, error){
@@ -39,13 +41,22 @@ func LoadConfig(envPath... string) (*Config, error){
 		return nil, fmt.Errorf("Error loading .env file")
 	}
 
+	// platform
 	encryApiKey := os.Getenv("apiKey")
 	encryApiSecret := os.Getenv("apiSecret")
 	apiKey := encryption.Decrypt(key, encryApiKey)
 	apiSecret := encryption.Decrypt(key, encryApiSecret)
 	pubEndpoint := os.Getenv("bf.pub.endpoint")
-	minLoad := os.Getenv("bf.min.loan")
+
+	// balance
+	minLoad := os.Getenv("bf.balance.min.loan")
+	balanceLeft := os.Getenv("bf.balance.left")
+
+	//FRR
 	frrBias := os.Getenv("bf.FRR.bias")
+
+	// order
+	maxSingleOrderAmount := os.Getenv("bf.order.single.max.amount")
 
 	cfg := &Config{}
 	cfg.ApiKey = apiKey
@@ -53,6 +64,8 @@ func LoadConfig(envPath... string) (*Config, error){
 	cfg.PubEndpoint = pubEndpoint
 	cfg.MinLoan, _ = strconv.ParseFloat(minLoad, 64)
 	cfg.FrrBias, _ = strconv.ParseFloat(frrBias, 64)
+	cfg.BalanceLeft, _ = strconv.ParseFloat(balanceLeft, 64)
+	cfg.MaxSingleOrderAmount, _ = strconv.ParseFloat(maxSingleOrderAmount, 64)
 	log.Println("get config succ...")
 	return cfg,nil
 }
