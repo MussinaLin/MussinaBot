@@ -1,5 +1,10 @@
 package Bitfinex
 
+import (
+	"fmt"
+	"log"
+)
+
 type MussinaOrder struct{
 	Amount float64
 	Rate float64
@@ -8,7 +13,11 @@ type MussinaOrder struct{
 
 
 
-func GenOrders(availableBalance float64, maxSignleOrderAmount float64, minLoan float64, left float64) int{
+func GenOrders(availableBalance float64, maxSignleOrderAmount float64, minLoan float64,
+				left float64) *[]MussinaOrder{
+	log.Println(fmt.Sprintf("[GenOrders] availableBalance:%f, maxSignleOrderAmount:%f, " +
+		"minLoan:%f left:%f", availableBalance, maxSignleOrderAmount, minLoan, left))
+
 	availableBalance -= left
 	orders := make([]MussinaOrder, 0)
 	num := 0
@@ -22,6 +31,7 @@ func GenOrders(availableBalance float64, maxSignleOrderAmount float64, minLoan f
 			orders= append(orders, MussinaOrder{Amount:maxSignleOrderAmount, Rate:0, Period:2})
 		}
 	}
-	return num
+	log.Println(fmt.Sprintf("[GenOrders] gen %d orders", len(orders)))
+	return &orders
 }
 

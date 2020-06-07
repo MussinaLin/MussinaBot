@@ -56,4 +56,6 @@ func marginFundingLoan(cfg *utils.Config){
 
 	FRR := Bitfinex.GetFRR(10, cfg.FrrBias)
 	log.Println("FRR:",FRR)
+
+	Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
 }

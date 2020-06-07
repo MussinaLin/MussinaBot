@@ -34,7 +34,7 @@ func TestGenOrders(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GenOrders(tt.args.availableBalance, tt.args.maxSignleOrderAmount,tt.args.minLoan, tt.args.left); got != tt.want {
+			if got := GenOrders(tt.args.availableBalance, tt.args.maxSignleOrderAmount,tt.args.minLoan, tt.args.left); len(*got) != tt.want {
 				t.Errorf("GenOrders() = %v, want %v", got, tt.want)
 			}
 		})
