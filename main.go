@@ -49,7 +49,8 @@ func scheduler(tick *time.Ticker, cfg *utils.Config) {
 }
 
 func marginFundingLoan(cfg *utils.Config){
-	availBalance := Bitfinex.GetAvaliableBalance()
+	//availBalance := Bitfinex.GetAvaliableBalance()
+	availBalance := Bitfinex.GetAvaliableBalanceWS(cfg.ApiKey, cfg.ApiSecret,"")
 	log.Println("available balance:", availBalance)
 	if availBalance < cfg.MinLoan{
 		//return

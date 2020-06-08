@@ -12,6 +12,11 @@ func TestGetAvaliableBalance(t *testing.T){
 	t.Log("avaliable balance:", avalBalance)
 }
 
+func TestGetAvaliableBalanceWS(t *testing.T) {
+	cfg, _ := utils.LoadConfig("/Users/Mussina/GitRepo/MussinaBot/.env")
+	GetAvaliableBalanceWS(cfg.ApiKey, cfg.ApiSecret, "")
+	t.Log("ok...")
+}
 
 //func TestGetAvaliableBalance(t *testing.T) {
 //	tests := []struct {
