@@ -4,31 +4,39 @@ import (
 	"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"github.com/bitfinexcom/bitfinex-api-go/v2/websocket"
 	"log"
-	"time"
 )
 
-func GetAvaliableBalanceWS(apiKey string, apiSecret string, uri string) float64{
+var AvailableBalance float64
+var wsClient *websocket.Client
+
+func getAvailableBalance() float64{
+	return AvailableBalance
+}
+
+func StartAvaliableBalanceWS(apiKey string, apiSecret string, uri string){
 	p := websocket.NewDefaultParameters()
 
 	//p.URL = uri
-	c := websocket.NewWithParams(p).Credentials(apiKey, apiSecret)
-	err := c.Connect()
+	wsClient = websocket.NewWithParams(p).Credentials(apiKey, apiSecret)
+	err := wsClient.Connect()
 	if err != nil {
 		log.Fatalf("connecting authenticated websocket: %s", err)
 	}
 	go func() {
-		for msg := range c.Listen() {
-			//bitfinex.WalletUpdate{}
+		for msg := range wsClient.Listen() {
 			log.Printf("MSG RECV: %#v", msg)
+			_,ok := msg.(*bitfinex.WalletUpdate)
+			if ok{
+				log.Println("Got &bitfinex.WalletUpdate!")
+			}
 		}
 	}()
 
 	//ctx, _ := context.WithTimeout(context.Background(), time.Second*1)
 	//c.Authenticate(ctx)
-
-	time.Sleep(time.Second * 10)
-	return 0
 }
+
+
 
 func GetAvaliableBalance() float64{
 	wallets, _ := bitfinexClient.Wallet.Wallet()
