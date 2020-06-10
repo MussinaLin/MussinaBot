@@ -4,12 +4,13 @@ import (
 	"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"github.com/bitfinexcom/bitfinex-api-go/v2/websocket"
 	"log"
+	"time"
 )
 
 var AvailableBalance float64
 var wsClient *websocket.Client
 
-func getAvailableBalance() float64{
+func GetAvailableBalance() float64{
 	return AvailableBalance
 }
 
@@ -22,12 +23,17 @@ func StartAvaliableBalanceWS(apiKey string, apiSecret string, uri string){
 	if err != nil {
 		log.Fatalf("connecting authenticated websocket: %s", err)
 	}
+	log.Println("Start Bitfinex WS...")
 	go func() {
 		for msg := range wsClient.Listen() {
-			log.Printf("MSG RECV: %#v", msg)
-			_,ok := msg.(*bitfinex.WalletUpdate)
+
+			wu,ok := msg.(*bitfinex.WalletUpdate)
 			if ok{
-				log.Println("Got &bitfinex.WalletUpdate!")
+				log.Println("[Got bitfinex.WalletUpdate]")
+				log.Printf("MSG RECV: %#v", wu)
+				if wu.Type == WalletType(Funding).String(){
+					AvailableBalance = wu.BalanceAvailable
+				}
 			}
 		}
 	}()
@@ -36,19 +42,9 @@ func StartAvaliableBalanceWS(apiKey string, apiSecret string, uri string){
 	//c.Authenticate(ctx)
 }
 
-
-
-func GetAvaliableBalance() float64{
-	wallets, _ := bitfinexClient.Wallet.Wallet()
-	return getFundingWalletAvalBalance(wallets)
-}
-
-func getFundingWalletAvalBalance(wallets *bitfinex.WalletSnapshot) float64{
-	for _, wallet := range wallets.Snapshot{
-		if wallet.Type == WalletType(Funding).String(){
-			return wallet.BalanceAvailable
-		}
-	}
-	log.Println("[Error] Didn't get funding wallet...")
-	return -1
+func CloseWS(){
+	log.Println("close websocket...")
+	wsClient.Close()
+	time.Sleep(3 * time.Second)
+	log.Println("close websocket succ...")
 }
