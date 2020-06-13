@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-func GetFRR(priorMinutes int32, frrBias float64) float64{
-	log.Println(fmt.Sprintf("[GetFRR] priorMinutes:%d, frrBias:%f", priorMinutes, frrBias))
-	trades := getTradeHistory(priorMinutes)
+func GetFRR(priorSecs int, frrBias float64) float64{
+	log.Println(fmt.Sprintf("[GetFRR] priorSecs:%d, frrBias:%f", priorSecs, frrBias))
+	trades := getTradeHistory(priorSecs)
 	size := len(trades.Snapshot)
 	var FRR float64 = 0
 	for _, trade := range trades.Snapshot {
@@ -24,15 +24,15 @@ func GetFRR(priorMinutes int32, frrBias float64) float64{
 	return FRR
 }
 
-func getTradeHistory(priorMinutes int32) *bitfinex.TradeSnapshot{
+func getTradeHistory(priorSecs int) *bitfinex.TradeSnapshot{
 	now := time.Now()
 	millis := now.UnixNano() / 1000000
-	prior := now.Add(time.Duration(-priorMinutes) * time.Minute)
+	prior := now.Add(time.Duration(-priorSecs) * time.Second)
 	millisStart := prior.UnixNano() / 1000000
 	start := bitfinex.Mts(millisStart)
 	end := bitfinex.Mts(millis)
 
-	trades, err := bitfinexClient.Trades.PublicHistoryWithQuery("fUSD", start, end, bitfinex.QueryLimitMax, bitfinex.NewestFirst)
+	trades, err := bfRestClient.Trades.PublicHistoryWithQuery("fUSD", start, end, bitfinex.QueryLimitMax, bitfinex.NewestFirst)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}

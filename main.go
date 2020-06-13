@@ -3,7 +3,6 @@ package main
 import (
 	"MussinaBot/Bitfinex"
 	"MussinaBot/utils"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -57,7 +56,7 @@ func scheduler(tick *time.Ticker, cfg *utils.Config) {
 func startBitfinexWS(cfg *utils.Config){
 	if oneTimeFlag == true{
 		// start ws
-		Bitfinex.StartAvaliableBalanceWS(cfg.ApiKey, cfg.ApiSecret,"")
+		Bitfinex.StartAvaliableBalanceWS(cfg.ApiKey, cfg.ApiSecret,cfg.WsURL)
 		oneTimeFlag = false
 	}
 }
@@ -68,8 +67,9 @@ func marginFundingLoan(cfg *utils.Config){
 	if availBalance < cfg.MinLoan{
 		//return
 	}
-	FRR := Bitfinex.GetFRR(10, cfg.FrrBias)
+	FRR := Bitfinex.GetFRR(cfg.FrrCalculatePriorSecs, cfg.FrrBias)
 	orders := Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
 	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
-	fmt.Println(orders)
+	log.Println(orders)
+
 }

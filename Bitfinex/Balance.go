@@ -16,7 +16,6 @@ func GetAvailableBalance() float64{
 
 func StartAvaliableBalanceWS(apiKey string, apiSecret string, uri string){
 	p := websocket.NewDefaultParameters()
-
 	//p.URL = uri
 	wsClient = websocket.NewWithParams(p).Credentials(apiKey, apiSecret)
 	err := wsClient.Connect()

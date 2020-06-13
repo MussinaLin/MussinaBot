@@ -43,3 +43,7 @@ func AssignRate(FRR float64, increaseRate float64, orders *[]MussinaOrder) *[]Mu
 	return orders
 }
 
+func SubmitOrders(orders *[]MussinaOrder){
+
+
+}

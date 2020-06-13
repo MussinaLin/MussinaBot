@@ -20,7 +20,9 @@ type Config struct {
 	FrrBias float64
 	FrrLoanMonthRate float64
 	FrrIncreaseRate float64
+	FrrCalculatePriorSecs int
 	MaxSingleOrderAmount float64
+	WsURL string
 }
 
 func LoadConfig(envPath... string) (*Config, error){
@@ -58,9 +60,12 @@ func LoadConfig(envPath... string) (*Config, error){
 	frrBias := os.Getenv("bf.FRR.bias")
 	frrLoanMonthRate := os.Getenv("bf.FRR.loan.month")
 	frrIncreaseRate := os.Getenv("bf.FRR.increasing.rate")
-
+	frrCalculatePriorSecs := os.Getenv("bf.FRR.calculate.prior.seconds")
 	// order
 	maxSingleOrderAmount := os.Getenv("bf.order.single.max.amount")
+
+	//WS
+	wsUrl := os.Getenv("bf.ws.url")
 
 	cfg := &Config{}
 	cfg.ApiKey = apiKey
@@ -70,8 +75,10 @@ func LoadConfig(envPath... string) (*Config, error){
 	cfg.FrrBias, _ = strconv.ParseFloat(frrBias, 64)
 	cfg.FrrLoanMonthRate, _ = strconv.ParseFloat(frrLoanMonthRate, 64)
 	cfg.FrrIncreaseRate, _ = strconv.ParseFloat(frrIncreaseRate, 64)
+	cfg.FrrCalculatePriorSecs,_ = strconv.Atoi(frrCalculatePriorSecs)
 	cfg.BalanceLeft, _ = strconv.ParseFloat(balanceLeft, 64)
 	cfg.MaxSingleOrderAmount, _ = strconv.ParseFloat(maxSingleOrderAmount, 64)
+	cfg.WsURL = wsUrl
 	log.Println("get config succ...")
 	return cfg,nil
 }
