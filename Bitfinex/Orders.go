@@ -2,6 +2,7 @@ package Bitfinex
 
 import (
 	"fmt"
+	"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"log"
 )
 
@@ -44,6 +45,17 @@ func AssignRate(FRR float64, increaseRate float64, orders *[]MussinaOrder) *[]Mu
 }
 
 func SubmitOrders(orders *[]MussinaOrder){
+	noti,err := bfRestClient.Funding.SubmitOffer(&bitfinex.FundingOfferRequest{
+		Type:"LIMIT",
+		Symbol:"fUSD",
+		Amount:50,
+		Rate:0.07,
+		Period:2,
+		Hidden:false,
+	})
+	if err != nil{
+		log.Println("[ERROR] ", err.Error())
+	}
 
-
+	log.Println(noti)
 }

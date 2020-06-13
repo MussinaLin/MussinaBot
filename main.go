@@ -71,5 +71,5 @@ func marginFundingLoan(cfg *utils.Config){
 	orders := Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
 	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
 	log.Println(orders)
-
+	Bitfinex.SubmitOrders(orders)
 }

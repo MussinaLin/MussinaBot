@@ -12,6 +12,7 @@ func GetFRR(priorSecs int, frrBias float64) float64{
 	log.Println(fmt.Sprintf("[GetFRR] priorSecs:%d, frrBias:%f", priorSecs, frrBias))
 	trades := getTradeHistory(priorSecs)
 	size := len(trades.Snapshot)
+	log.Println("trades.Snapshot size:",size)
 	var FRR float64 = 0
 	for _, trade := range trades.Snapshot {
 		FRR += trade.Price

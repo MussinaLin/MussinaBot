@@ -40,3 +40,26 @@ func TestGenOrders(t *testing.T) {
 		})
 	}
 }
+
+func TestSubmitOrders(t *testing.T) {
+	type args struct {
+		orders *[]MussinaOrder
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name:"test1",
+			args: args{&[]MussinaOrder{ MussinaOrder{
+				Amount: 0.5,
+				Rate:   0.05,
+				Period: 2,
+			} }},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+		})
+	}
+}
