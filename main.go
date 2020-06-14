@@ -13,7 +13,7 @@ import (
 
 var oneTimeFlag bool = true
 var ordersNoti *[]bitfinex.Notification = nil
-var ordersProvidedCount map[string]int32
+var ordersProvidedCount map[int64]int32
 
 func main() {
 	cfg, err := utils.LoadConfig()
@@ -73,15 +73,25 @@ func marginFundingLoan(cfg *utils.Config){
 	availBalance := Bitfinex.GetAvailableBalance()
 	log.Println("available balance:", availBalance)
 	if availBalance < cfg.MinLoan{
-		//return
+		return
 	}
 	FRR := Bitfinex.GetFRR(cfg.FrrCalculatePriorSecs, cfg.FrrBias)
 	orders := Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
 	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
-	orders = Bitfinex.ModifyPeriod(orders, cfg.FrrLoanMonthRate)
+	//orders = Bitfinex.ModifyPeriod(orders, cfg.FrrLoanMonthRate)
 	log.Println(orders)
 	ordersNoti = Bitfinex.SubmitOrders(orders)
+	time.Sleep(100 * time.Millisecond)
+	Bitfinex.GetAllActiveOrders()
+	initOrdersProvidedCount(ordersNoti)
+}
 
+func initOrdersProvidedCount(ordersNoti *[]bitfinex.Notification){
+	log.Println("[initOrdersProvidedCount]...")
+	ordersProvidedCount = make(map[int64]int32)
+	for _, order := range *ordersNoti{
+		ordersProvidedCount[order.MessageID] = 0
+	}
 }
 
 func isFundProvided() bool{

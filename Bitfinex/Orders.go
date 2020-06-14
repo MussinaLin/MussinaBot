@@ -66,7 +66,7 @@ func SubmitOrders(orders *[]MussinaOrder) *[]bitfinex.Notification{
 			Type:"LIMIT",
 			Symbol:"fUSD",
 			Amount:order.Amount,
-			Rate:order.Rate,
+			Rate:order.Rate * 0.01,  // bitfinex rate is raw data. ex: 0.036 % ---> 0.00036
 			Period:order.Period,
 			Hidden:false,
 		})
@@ -79,4 +79,21 @@ func SubmitOrders(orders *[]MussinaOrder) *[]bitfinex.Notification{
 		}
 	}
 	return &bfOffersNoti
+}
+
+func GetAllActiveOrders() *[]*bitfinex.Offer{
+	log.Println("[GetAllActiveOrders]...")
+	snapshot, err := bfRestClient.Funding.Offers("fUSD")
+	if err != nil{
+		log.Println("[ERROR] ", err.Error())
+		return nil
+	}else{
+		if snapshot != nil{
+			log.Println(snapshot.Snapshot)
+			return &snapshot.Snapshot
+		}else{
+			log.Println("Active orders:0")
+			return nil
+		}
+	}
 }
