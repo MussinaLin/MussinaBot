@@ -106,13 +106,18 @@ func initOrdersProvidedCount(ordersNoti *[]bitfinex.Notification){
 }
 
 func checkOrderStatus(notLendTh int){
+	log.Println(fmt.Sprintf("[checkOrderStatus] fundingNotLendCount:[%d]",fundingNotLendCount))
 	if fundingNotLendCount >= notLendTh{
+		log.Println("cancel all orders...")
+		fundingNotLendCount = 0
 		// cancel all order
 	}
 
 	if !isAllFundProvided(){
+		log.Println("Funds are not all provided...")
 		fundingNotLendCount++
 	}else{
+		log.Println("===== Funds are all provided =====")
 		fundingNotLendCount = 0
 	}
 }
