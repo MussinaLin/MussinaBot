@@ -3,6 +3,7 @@ package main
 import (
 	"MussinaBot/Bitfinex"
 	"MussinaBot/utils"
+	"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"log"
 	"os"
 	"os/signal"
@@ -11,6 +12,8 @@ import (
 )
 
 var oneTimeFlag bool = true
+var ordersNoti *[]bitfinex.Notification = nil
+var ordersProvidedCount map[string]int32
 
 func main() {
 	cfg, err := utils.LoadConfig()
@@ -46,7 +49,11 @@ func scheduler(tick *time.Ticker, cfg *utils.Config) {
 			startBitfinexWS(cfg)
 			// loan algorithm
 			log.Println("Bitfinex is up...")
-			marginFundingLoan(cfg)
+			if ordersNoti == nil{
+				marginFundingLoan(cfg)
+			}else{
+
+			}
 		}else{
 			log.Println("Bitfinex is down...")
 		}
@@ -62,6 +69,7 @@ func startBitfinexWS(cfg *utils.Config){
 }
 
 func marginFundingLoan(cfg *utils.Config){
+	log.Println("[marginFundingLoan]...")
 	availBalance := Bitfinex.GetAvailableBalance()
 	log.Println("available balance:", availBalance)
 	if availBalance < cfg.MinLoan{
@@ -72,5 +80,10 @@ func marginFundingLoan(cfg *utils.Config){
 	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
 	orders = Bitfinex.ModifyPeriod(orders, cfg.FrrLoanMonthRate)
 	log.Println(orders)
-	Bitfinex.SubmitOrders(orders)
+	ordersNoti = Bitfinex.SubmitOrders(orders)
+
+}
+
+func isFundProvided() bool{
+	return false
 }

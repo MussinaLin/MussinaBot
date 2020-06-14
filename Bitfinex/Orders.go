@@ -58,7 +58,9 @@ func ModifyPeriod(orders *[]MussinaOrder, loan30DaysRate float64) *[]MussinaOrde
 	return orders
 }
 
-func SubmitOrders(orders *[]MussinaOrder){
+func SubmitOrders(orders *[]MussinaOrder) *[]bitfinex.Notification{
+	log.Println(fmt.Sprintf("[SubmitOrders] orders size:[%d]", len(*orders)))
+	bfOffersNoti := make([]bitfinex.Notification, len(*orders))
 	for _, order := range *orders{
 		noti,err := bfRestClient.Funding.SubmitOffer(&bitfinex.FundingOfferRequest{
 			Type:"LIMIT",
@@ -70,8 +72,11 @@ func SubmitOrders(orders *[]MussinaOrder){
 		})
 		if err != nil{
 			log.Println("[ERROR] ", err.Error())
+		}else{
+			log.Println("[SubmitOrders] succ...")
+			bfOffersNoti = append(bfOffersNoti, *noti)
+			log.Println(noti)
 		}
-		log.Println(noti)
 	}
-
+	return &bfOffersNoti
 }
