@@ -110,7 +110,10 @@ func checkOrderStatus(notLendTh int){
 	if fundingNotLendCount >= notLendTh{
 		log.Println("cancel all orders...")
 		fundingNotLendCount = 0
+
 		// cancel all order
+
+		return
 	}
 
 	if !isAllFundProvided(){
