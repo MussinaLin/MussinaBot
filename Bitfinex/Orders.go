@@ -44,6 +44,20 @@ func AssignRate(FRR float64, increaseRate float64, orders *[]MussinaOrder) *[]Mu
 	return orders
 }
 
+func ModifyPeriod(orders *[]MussinaOrder, loan30DaysRate float64) *[]MussinaOrder{
+	log.Println("[ModifyPeriod]...")
+	for index, _ := range *orders{
+		rate := (*orders)[index].Rate
+		annualRate := rate * 365
+		if annualRate > loan30DaysRate{
+			(*orders)[index].Period = 30
+			log.Println(fmt.Sprintf("[ModifyPeriod] amount:[%f] rate:[%f] change period to 30.",
+				(*orders)[index].Amount, (*orders)[index].Rate))
+		}
+	}
+	return orders
+}
+
 func SubmitOrders(orders *[]MussinaOrder){
 	for _, order := range *orders{
 		noti,err := bfRestClient.Funding.SubmitOffer(&bitfinex.FundingOfferRequest{
@@ -59,5 +73,5 @@ func SubmitOrders(orders *[]MussinaOrder){
 		}
 		log.Println(noti)
 	}
-	
+
 }
