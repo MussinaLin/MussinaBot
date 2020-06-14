@@ -81,19 +81,22 @@ func SubmitOrders(orders *[]MussinaOrder) *[]bitfinex.Notification{
 	return &bfOffersNoti
 }
 
-func GetAllActiveOrders() *[]*bitfinex.Offer{
+func GetActiveOrdersSize() int{
 	log.Println("[GetAllActiveOrders]...")
 	snapshot, err := bfRestClient.Funding.Offers("fUSD")
 	if err != nil{
 		log.Println("[ERROR] ", err.Error())
-		return nil
+		return 0
 	}else{
 		if snapshot != nil{
-			log.Println(snapshot.Snapshot)
-			return &snapshot.Snapshot
+			for _, offer := range snapshot.Snapshot{
+				log.Println(*offer)
+			}
+			log.Println(fmt.Sprintf("active order size:[%d]", len(snapshot.Snapshot)))
+			return len(snapshot.Snapshot)
 		}else{
-			log.Println("Active orders:0")
-			return nil
+			log.Println("No active orders...")
+			return 0
 		}
 	}
 }

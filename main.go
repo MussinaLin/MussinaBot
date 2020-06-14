@@ -3,6 +3,7 @@ package main
 import (
 	"MussinaBot/Bitfinex"
 	"MussinaBot/utils"
+	"fmt"
 	"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"log"
 	"os"
@@ -14,6 +15,8 @@ import (
 var oneTimeFlag bool = true
 var ordersNoti *[]bitfinex.Notification = nil
 var ordersProvidedCount map[int64]int32
+//var activeOrderSize = 0
+var fundingNotLendCount = 0
 
 func main() {
 	cfg, err := utils.LoadConfig()
@@ -49,10 +52,10 @@ func scheduler(tick *time.Ticker, cfg *utils.Config) {
 			startBitfinexWS(cfg)
 			// loan algorithm
 			log.Println("Bitfinex is up...")
-			if ordersNoti == nil{
+			if fundingNotLendCount == 0{
 				marginFundingLoan(cfg)
 			}else{
-
+				checkOrderStatus(cfg.OrdersNotLendTh)
 			}
 		}else{
 			log.Println("Bitfinex is down...")
@@ -75,15 +78,23 @@ func marginFundingLoan(cfg *utils.Config){
 	if availBalance < cfg.MinLoan{
 		return
 	}
+
 	FRR := Bitfinex.GetFRR(cfg.FrrCalculatePriorSecs, cfg.FrrBias)
 	orders := Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
 	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
 	//orders = Bitfinex.ModifyPeriod(orders, cfg.FrrLoanMonthRate)
 	log.Println(orders)
+
 	ordersNoti = Bitfinex.SubmitOrders(orders)
-	time.Sleep(100 * time.Millisecond)
-	Bitfinex.GetAllActiveOrders()
-	initOrdersProvidedCount(ordersNoti)
+	submittedOrderCount := len(*ordersNoti)
+	//time.Sleep(300 * time.Millisecond)
+	if submittedOrderCount > 0{
+		log.Println(fmt.Sprintf("submit order count:[%d]", submittedOrderCount))
+		fundingNotLendCount++
+	}else{
+		log.Println(fmt.Sprintf("[ERROR] submit order fail...count:[%d]", submittedOrderCount))
+	}
+	//initOrdersProvidedCount(ordersNoti)
 }
 
 func initOrdersProvidedCount(ordersNoti *[]bitfinex.Notification){
@@ -94,6 +105,23 @@ func initOrdersProvidedCount(ordersNoti *[]bitfinex.Notification){
 	}
 }
 
-func isFundProvided() bool{
-	return false
+func checkOrderStatus(notLendTh int){
+	if fundingNotLendCount >= notLendTh{
+		// cancel all order
+	}
+
+	if !isAllFundProvided(){
+		fundingNotLendCount++
+	}else{
+		fundingNotLendCount = 0
+	}
+}
+
+func isAllFundProvided() bool{
+	size := Bitfinex.GetActiveOrdersSize()
+	if size > 0{
+		return false
+	}else{
+		return true
+	}
 }
