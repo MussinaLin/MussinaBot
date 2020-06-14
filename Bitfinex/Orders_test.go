@@ -1,6 +1,7 @@
 package Bitfinex
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -60,6 +61,42 @@ func TestSubmitOrders(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+		})
+	}
+}
+
+func TestModifyPeriod(t *testing.T) {
+	type args struct {
+		orders         *[]MussinaOrder
+		loan30DaysRate float64
+	}
+	tests := []struct {
+		name string
+		args args
+		want *[]MussinaOrder
+	}{
+		{
+			name:"test30",
+			args:args{
+				orders:&[]MussinaOrder{{
+					Amount: 100,
+					Rate:   0.09,
+					Period: 2,
+				}},
+				loan30DaysRate: 27,
+			},
+			want:&[]MussinaOrder{{
+				Amount: 100,
+				Rate:   0.09,
+				Period: 30,
+			}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ModifyPeriod(tt.args.orders, tt.args.loan30DaysRate); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ModifyPeriod() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

@@ -70,6 +70,7 @@ func marginFundingLoan(cfg *utils.Config){
 	FRR := Bitfinex.GetFRR(cfg.FrrCalculatePriorSecs, cfg.FrrBias)
 	orders := Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
 	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
+	orders = Bitfinex.ModifyPeriod(orders, cfg.FrrLoanMonthRate)
 	log.Println(orders)
 	Bitfinex.SubmitOrders(orders)
 }
