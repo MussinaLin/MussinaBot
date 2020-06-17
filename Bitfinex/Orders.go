@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"log"
+	"time"
 )
 
 type MussinaOrder struct{
@@ -82,7 +83,7 @@ func SubmitOrders(orders *[]MussinaOrder) *[]bitfinex.Notification{
 }
 
 func GetActiveOrdersSize() int{
-	log.Println("[GetAllActiveOrders]...")
+	log.Println("[GetActiveOrdersSize]...")
 	snapshot, err := bfRestClient.Funding.Offers("fUSD")
 	if err != nil{
 		log.Println("[ERROR] ", err.Error())
@@ -99,4 +100,37 @@ func GetActiveOrdersSize() int{
 			return 0
 		}
 	}
+}
+
+func GetActiveOrders() *[]*bitfinex.Offer{
+	log.Println("[GetAllActiveOrders]...")
+	snapshot, err := bfRestClient.Funding.Offers("fUSD")
+	if err != nil{
+		log.Println("[ERROR] ", err.Error())
+		return nil
+	}else{
+		if snapshot != nil{
+			log.Println(fmt.Sprintf("active order size:[%d]", len(snapshot.Snapshot)))
+			return &snapshot.Snapshot
+		}else{
+			log.Println("No active orders...")
+			return nil
+		}
+	}
+}
+
+func CancelAllOrders(orders *[]*bitfinex.Offer) {
+	log.Println("[CancelAllOrders]...orders size:", len(*orders))
+	for _, order := range *orders{
+		resp, err := bfRestClient.Funding.CancelOffer(&bitfinex.FundingOfferCancelRequest{
+			Id:order.ID,
+		})
+		if err != nil{
+			log.Println("[ERROR] ", err.Error())
+		}else{
+			log.Println(resp.Text)
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+
 }
