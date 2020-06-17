@@ -83,7 +83,7 @@ func marginFundingLoan(cfg *utils.Config){
 	orders := Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
 	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
 	//orders = Bitfinex.ModifyPeriod(orders, cfg.FrrLoanMonthRate)
-	log.Println(orders)
+	//log.Println(orders)
 
 	ordersNoti = Bitfinex.SubmitOrders(orders)
 	submittedOrderCount := len(*ordersNoti)
@@ -107,16 +107,21 @@ func initOrdersProvidedCount(ordersNoti *[]bitfinex.Notification){
 
 func checkOrderStatus(notLendTh int){
 	log.Println(fmt.Sprintf("[checkOrderStatus] fundingNotLendCount:[%d]",fundingNotLendCount))
+	// get all orders
+	orders := Bitfinex.GetActiveOrders()
+
 	if fundingNotLendCount >= notLendTh{
 		log.Println("cancel all orders...")
 		fundingNotLendCount = 0
 
 		// cancel all order
-
+		if orders != nil{
+			Bitfinex.CancelAllOrders(orders)
+		}
 		return
 	}
 
-	if !isAllFundProvided(){
+	if !isAllFundProvided(orders){
 		log.Println("Funds are not all provided...")
 		fundingNotLendCount++
 	}else{
@@ -125,10 +130,14 @@ func checkOrderStatus(notLendTh int){
 	}
 }
 
-func isAllFundProvided() bool{
-	size := Bitfinex.GetActiveOrdersSize()
-	if size > 0{
-		return false
+func isAllFundProvided(orders *[]*bitfinex.Offer) bool{
+	if orders != nil{
+		size := len(*orders)
+		if size > 0{
+			return false
+		}else{
+			return true
+		}
 	}else{
 		return true
 	}
