@@ -2,6 +2,7 @@ package main
 
 import (
 	"MussinaBot/Bitfinex"
+	"MussinaBot/http"
 	"MussinaBot/utils"
 	"fmt"
 	"github.com/bitfinexcom/bitfinex-api-go/v2"
@@ -25,26 +26,23 @@ func main() {
 	}
 
 	// periodic job
-	tick := time.NewTicker(time.Second * 6)
-	go scheduler(tick, cfg)
+	//tick := time.NewTicker(time.Second * 6)
+	//go scheduler(tick, cfg)
 
 	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
+
+	// start http server
+	http.StartHttpServer()
+
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	<-sigs
-	tick.Stop()
+	//tick.Stop()
 	log.Println("Stop timer...")
-	Bitfinex.CloseWS()
-	//c := rest.NewClientWithURL("https://api.bitfinex.com/v2/").Credentials(key, secret)
-	//
-	//snapHist, err := c.Funding.OfferHistory("fUSD")
-	//if err != nil {
-	//	panic(err)
-	//}
-	//for _, item := range snapHist.Snapshot {
-	//	fmt.Println(item)
-	//}
+	//Bitfinex.CloseWS()
+
+
 }
 func scheduler(tick *time.Ticker, cfg *utils.Config) {
 	for range tick.C {
