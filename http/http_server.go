@@ -1,6 +1,7 @@
 package http
 
 import (
+	"MussinaBot/api"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,5 +28,6 @@ func StartHttpServer(){
 	//	Handler: nil,
 	//}
 	http.HandleFunc("/hello", hello)
+	http.HandleFunc("/balance", api.GetGeneralResp)
 	http.ListenAndServe(":8090", nil)
 }
