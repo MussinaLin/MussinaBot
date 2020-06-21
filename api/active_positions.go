@@ -5,6 +5,7 @@ import (
 	"MussinaBot/utils"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"time"
 )
@@ -16,6 +17,7 @@ type ProvideFunds struct{
 	Amount		float64 `json:"amount"`
 	Rate		float64 `json:"rate"`
 	Period		int64 `json:"period"`
+	ExpireAt 	float64 `json:"expire_at"`
 	PositionPair string `json:"position_pair"`
 }
 func GetProvideFunds(w http.ResponseWriter, req *http.Request){
@@ -30,8 +32,9 @@ func GetProvideFunds(w http.ResponseWriter, req *http.Request){
 			Symbol:      credit.Symbol,
 			UpdatedTime: cnvTimestamp2String(credit.MTSOpened),
 			Amount:      credit.Amount,
-			Rate:        credit.Rate,
+			Rate:        utils.CnvDailyRate2AnnualRate(credit.Rate),
 			Period:      credit.Period,
+			ExpireAt:    getHowFarBeforeExpireTime(credit.MTSOpened, credit.Period),
 			PositionPair:credit.PositionPair,
 		}
 		provideFunds = append(provideFunds, funds)
@@ -44,4 +47,15 @@ func cnvTimestamp2String(timestamp int64) string{
 	t := time.Unix(timestamp, 0)
 	strDate := t.Format(time.RFC3339)
 	return strDate
+}
+
+func getHowFarBeforeExpireTime(createMTS int64, period int64) float64{
+	createMTS = createMTS / 1000
+	periodMTS := 86400 * period
+	expireTime := periodMTS + createMTS
+	now := time.Now().Unix()
+	result := expireTime - now
+	resultF := float64(result) / float64(3600)
+	resultF = math.Round(resultF*10) / 10
+	return resultF
 }
