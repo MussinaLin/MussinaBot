@@ -14,6 +14,7 @@ type GeneralResp struct{
 }
 
 func GetGeneralResp(w http.ResponseWriter, req *http.Request){
+	log.Println("[GetGeneralResp...]")
 	resp := GeneralResp{}
 	resp.TotalBalance = Bitfinex.GetTotalBalance()
 	resp.AvailableBalance = Bitfinex.GetAvailableBalance()

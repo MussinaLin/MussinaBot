@@ -29,5 +29,7 @@ func StartHttpServer(){
 	//}
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/balance", api.GetGeneralResp)
-	http.ListenAndServe(":8090", nil)
+	go func() {
+		http.ListenAndServe(":8090", nil)
+	}()
 }

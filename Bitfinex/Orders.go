@@ -134,3 +134,12 @@ func CancelAllOrders(orders *[]*bitfinex.Offer) {
 	}
 
 }
+
+func GetActivePositions() *bitfinex.FundingCreditSnapshot{
+	log.Println("[GetActivePositions]...")
+	credit, err := bfRestClient.Funding.Credits("fUSD")
+	if err != nil{
+		log.Println("[ERROR] GetActivePositions...", err.Error())
+	}
+	return credit
+}

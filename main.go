@@ -31,9 +31,9 @@ func main() {
 
 	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
 
+	Bitfinex.GetActivePositions()
 	// start http server
 	http.StartHttpServer()
-
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
