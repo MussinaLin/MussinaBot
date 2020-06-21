@@ -31,7 +31,7 @@ func main() {
 
 	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
 
-	Bitfinex.GetActivePositions()
+	//Bitfinex.GetActivePositions()
 	// start http server
 	http.StartHttpServer()
 
