@@ -8,10 +8,15 @@ import (
 )
 
 var AvailableBalance float64
+var TotalBalance float64
 var wsClient *websocket.Client
 
 func GetAvailableBalance() float64{
 	return AvailableBalance
+}
+
+func GetTotalBalance() float64{
+	return TotalBalance
 }
 
 func StartAvaliableBalanceWS(apiKey string, apiSecret string, uri string){
@@ -32,6 +37,7 @@ func StartAvaliableBalanceWS(apiKey string, apiSecret string, uri string){
 				log.Printf("MSG RECV: %#v", wu)
 				if wu.Type == WalletType(Funding).String(){
 					AvailableBalance = wu.BalanceAvailable
+					TotalBalance = wu.Balance
 				}
 			}
 		}
