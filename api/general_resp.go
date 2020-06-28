@@ -48,6 +48,7 @@ func GetEarnedInterest(w http.ResponseWriter, req *http.Request){
 	
 	interests := make([]DailyInterest, 0, 50)
 	var totalEarned float64 = 0.0
+	var days int64 = 0
 	for _, ledger := range *ledgers{
 		if strings.Contains(ledger.Description, "Margin Funding Payment"){
 			dailyEarn := DailyInterest{
@@ -57,12 +58,21 @@ func GetEarnedInterest(w http.ResponseWriter, req *http.Request){
 			}
 			interests = append(interests, dailyEarn)
 			totalEarned += ledger.Amount
+			days++
 		}
 	}
-	resp :=
-	
+	resp := InterestSummary{
+		TotalEarned:    utils.RoundFloat(totalEarned),
+		Apy:            getApyFromTotalEarned(totalEarned, Bitfinex.GetTotalBalance(), days),
+		DailyInterests: interests,
+	}
+	fmt.Fprintf(w, utils.CnvStruct2Json(resp))
 }
 
 func getApyFromTotalEarned(totalEarned float64, balance float64, days int64) float64{
+	if balance == 0{
+		log.Println("[ERROR] balance is 0")
+		balance = 6738.56
+	}
 	return utils.RoundFloat( (totalEarned / balance) * 365 / float64(days))
 }

@@ -145,7 +145,7 @@ func GetActivePositions() *bitfinex.FundingCreditSnapshot{
 }
 
 func GetLedgers(currency string, start int64, end int64) *[]*bitfinex.Ledger{
-	log.Println("[GetUSDLedgers]...")
+	log.Println("[GetLedgers]...", currency)
 	ledgersSnap, err := bfRestClient.Ledgers.Ledgers(currency, start, end, 500)
 	if err != nil{
 		log.Println("[ERROR] GetLedgers...", err.Error())
@@ -155,5 +155,6 @@ func GetLedgers(currency string, start int64, end int64) *[]*bitfinex.Ledger{
 		log.Println("[ERROR] GetLedgers...ledger snapshot is nil")
 		return nil
 	}
+	log.Println("ledger size:", len(ledgersSnap.Snapshot))
 	return &ledgersSnap.Snapshot
 }

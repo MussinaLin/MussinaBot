@@ -11,7 +11,7 @@ import (
 func CnvStruct2Json(v interface{}) string{
 	result, err := json.Marshal(v)
 	if err != nil {
-		log.Println("[ERROR] GetGeneralResp error...", err)
+		log.Println("[ERROR] CnvStruct2Json error...", err)
 		return fmt.Sprintf("Conv Obj to json fail...%s", err.Error())
 	}
 	return string(result)
@@ -34,5 +34,9 @@ func CnvTimestamp2String(timestamp int64) string{
 }
 
 func GetApyFromDailyInterest(balance float64, earned float64) float64{
-	return CnvDailyRate2AnnualRate((earned / balance) * 365)
+	if balance == 0{
+		log.Println("[ERROR] balance is 0")
+		balance = 6738.56
+	}
+	return CnvDailyRate2AnnualRate((earned / balance) * 100)
 }
