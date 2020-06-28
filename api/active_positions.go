@@ -30,7 +30,7 @@ func GetProvideFunds(w http.ResponseWriter, req *http.Request){
 		funds := ProvideFunds{
 			Id:          credit.ID,
 			Symbol:      credit.Symbol,
-			UpdatedTime: cnvTimestamp2String(credit.MTSOpened),
+			UpdatedTime: utils.CnvTimestamp2String(credit.MTSOpened),
 			Amount:      credit.Amount,
 			Rate:        utils.CnvDailyRate2AnnualRate(credit.Rate),
 			Period:      credit.Period,
@@ -40,13 +40,6 @@ func GetProvideFunds(w http.ResponseWriter, req *http.Request){
 		provideFunds = append(provideFunds, funds)
 	}
 	fmt.Fprintf(w, utils.CnvStruct2Json(provideFunds))
-}
-
-func cnvTimestamp2String(timestamp int64) string{
-	timestamp = timestamp / 1000
-	t := time.Unix(timestamp, 0)
-	strDate := t.Format(time.RFC3339)
-	return strDate
 }
 
 func getHowFarBeforeExpireTime(createMTS int64, period int64) float64{

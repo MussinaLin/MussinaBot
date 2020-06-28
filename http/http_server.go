@@ -30,6 +30,7 @@ func StartHttpServer(){
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/balance", api.GetGeneralResp)
 	http.HandleFunc("/funds/provided", api.GetProvideFunds)
+	http.HandleFunc("/funds/earned", api.GetEarnedInterest)
 	go func() {
 		http.ListenAndServe(":8090", nil)
 	}()
