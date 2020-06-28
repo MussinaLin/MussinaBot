@@ -16,8 +16,16 @@ type GeneralResp struct{
 	Rate float64 `json:"rate"`
 }
 
-type EarnedInterest struct {
+type InterestSummary struct {
+	TotalEarned float64 `json:"total_earned"`
+	Apy float64 `json:"apy"`
+	DailyInterests []DailyInterest `json:"daily_interests"`
+}
 
+type DailyInterest struct {
+	Date string `json:"date"`
+	Amount float64 `json:"amount"`
+	Rate float64 `json:"rate"`
 }
 
 func GetGeneralResp(w http.ResponseWriter, req *http.Request){
@@ -32,19 +40,29 @@ func GetGeneralResp(w http.ResponseWriter, req *http.Request){
 func GetEarnedInterest(w http.ResponseWriter, req *http.Request){
 	log.Println("[GetEarnedInterest...]")
 	now := time.Now().Unix()
-	s := int64(86400 * 2450) // the day before 2450 days. 2450 is max_limit of ledgers count.
+	s := int64(86400 * 500) // the day before 500 days. 500 is max_limit of ledgers count.
 	start := now - s
 	now = now * 1000
 	start = start * 1000
-	log.Println(fmt.Sprintf("start:%d end:%d", start, now))
 	ledgers := Bitfinex.GetLedgers("USD", start, now)
-	var c int32 = 0
-	for i, ledger := range *ledgers{
+	
+	interests := make([]DailyInterest, 0, 50)
+	var totalEarned float64 = 0.0
+	for _, ledger := range *ledgers{
 		if strings.Contains(ledger.Description, "Margin Funding Payment"){
-			log.Println(fmt.Sprintf("[%d]  Date:%s, Amount:%f, Balance:%f, Currency:%s",
-				i, utils.CnvTimestamp2String(ledger.MTS), ledger.Amount, ledger.Balance, ledger.Currency))
-			c++
+			dailyEarn := DailyInterest{
+				Date:   utils.CnvTimestamp2String(ledger.MTS),
+				Amount: ledger.Amount,
+				Rate:   utils.GetApyFromDailyInterest(Bitfinex.GetTotalBalance(), ledger.Amount),
+			}
+			interests = append(interests, dailyEarn)
+			totalEarned += ledger.Amount
 		}
 	}
-	log.Println("c:",c)
+	resp :=
+	
+}
+
+func getApyFromTotalEarned(totalEarned float64, balance float64, days int64) float64{
+	return utils.RoundFloat( (totalEarned / balance) * 365 / float64(days))
 }
