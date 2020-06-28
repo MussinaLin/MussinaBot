@@ -25,6 +25,22 @@ func GetFRR(priorSecs int, frrBias float64) float64{
 	return FRR
 }
 
+//func GetRealTimeApy(priorSecs int) float64{
+//	log.Println(fmt.Sprintf("[GetRealTimeApy] priorSecs:%d", priorSecs))
+//	trades := getTradeHistory(priorSecs)
+//	size := len(trades.Snapshot)
+//	log.Println("trades.Snapshot size:",size)
+//	var RR float64 = 0
+//	for _, trade := range trades.Snapshot {
+//		RR += trade.Price
+//	}
+//	FRR = FRR / float64(size)
+//	FRR = FRR * 100  // conv to %
+//	FRR = FRR + FRR * frrBias * 0.01
+//	FRR = math.Ceil(FRR*1000000) / 1000000
+//	log.Println("FRR:",FRR)
+//}
+
 func getTradeHistory(priorSecs int) *bitfinex.TradeSnapshot{
 	now := time.Now()
 	millis := now.UnixNano() / 1000000
