@@ -24,38 +24,38 @@ func main() {
 	if err != nil{
 		log.Fatalln(err.Error())
 	}
+	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
+
+	// process first
+	processBitfinexLoan(cfg)
 
 	// periodic job
 	tick := time.NewTicker(time.Second * 60)
 	go scheduler(tick, cfg)
 
-	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
-
 	// start http server
 	http.StartHttpServer()
 
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	<-sigs
-	tick.Stop()
-	log.Println("Stop timer...")
-	Bitfinex.CloseWS()
-
+	waitAndClose(tick)
 }
 func scheduler(tick *time.Ticker, cfg *utils.Config) {
 	for range tick.C {
-		if Bitfinex.IsPlatformWorking(){
-			startBitfinexWS(cfg)
-			// loan algorithm
-			log.Println("Bitfinex is up...")
-			if fundingNotLendCount == 0{
-				marginFundingLoan(cfg)
-			}else{
-				checkOrderStatus(cfg.OrdersNotLendTh)
-			}
+		processBitfinexLoan(cfg)
+	}
+}
+
+func processBitfinexLoan(cfg *utils.Config){
+	if Bitfinex.IsPlatformWorking(){
+		startBitfinexWS(cfg)
+		// loan algorithm
+		log.Println("Bitfinex is up...")
+		if fundingNotLendCount == 0{
+			marginFundingLoan(cfg)
 		}else{
-			log.Println("Bitfinex is down...")
+			checkOrderStatus(cfg.OrdersNotLendTh)
 		}
+	}else{
+		log.Println("Bitfinex is down...")
 	}
 }
 
@@ -129,3 +129,13 @@ func isAllFundProvided(orders *[]*bitfinex.Offer) bool{
 		return true
 	}
 }
+
+func waitAndClose(tick *time.Ticker){
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	<-sigs
+	tick.Stop()
+	log.Println("Stop timer...")
+	Bitfinex.CloseWS()
+}
+
