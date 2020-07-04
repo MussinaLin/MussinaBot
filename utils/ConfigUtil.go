@@ -12,18 +12,18 @@ import (
 var MussinaBotCfg *Config = &Config{}
 
 type Config struct {
-	ApiKey string
-	ApiSecret string
-	PubEndpoint string
-	MinLoan float64
-	BalanceLeft float64
-	FrrBias float64
-	FrrLoanMonthRate float64
-	FrrIncreaseRate float64
-	FrrCalculatePriorSecs int
-	MaxSingleOrderAmount float64
-	OrdersNotLendTh int
-	WsURL string
+	ApiKey string `json:"-"`
+	ApiSecret string `json:"-"`
+	PubEndpoint string `json:"pub_endpoint"`
+	MinLoan float64 `json:"min_loan"`
+	BalanceLeft float64 `json:"balance_left"`
+	FrrBias float64 `json:"frr_bias"`
+	FrrLoanMonthRate float64 `json:"frr_loan_month_rate"`
+	FrrIncreaseRate float64 `json:"frr_increase_rate"`
+	FrrCalculatePriorSecs int `json:"frr_calculate_prior_secs"`
+	MaxSingleOrderAmount float64 `json:"max_single_order_amount"`
+	OrdersNotLendTh int `json:"orders_not_lend_th"`
+	WsURL string `json:"ws_url"`
 }
 
 func LoadConfig(envPath... string) (*Config, error){
