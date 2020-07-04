@@ -82,6 +82,21 @@ func LoadConfig(envPath... string) (*Config, error){
 	cfg.MaxSingleOrderAmount, _ = strconv.ParseFloat(maxSingleOrderAmount, 64)
 	cfg.WsURL = wsUrl
 	cfg.OrdersNotLendTh, _ = strconv.Atoi(ordersNotLendTh)
-	log.Println("get config succ...")
+	printCfg(cfg)
 	return cfg,nil
+}
+
+func printCfg(cfg *Config){
+	log.Println("========== MussinaBot Config ==========")
+	log.Println(fmt.Sprintf("PubEndpoint=%s", cfg.PubEndpoint))
+	log.Println(fmt.Sprintf("MinLoan=%f", cfg.MinLoan))
+	log.Println(fmt.Sprintf("FrrBias=%f", cfg.FrrBias))
+	log.Println(fmt.Sprintf("FrrLoanMonthRate=%f", cfg.FrrLoanMonthRate))
+	log.Println(fmt.Sprintf("FrrIncreaseRate=%f", cfg.FrrIncreaseRate))
+	log.Println(fmt.Sprintf("FrrCalculatePriorSecs=%d", cfg.FrrCalculatePriorSecs))
+	log.Println(fmt.Sprintf("BalanceLeft=%f", cfg.BalanceLeft))
+	log.Println(fmt.Sprintf("MaxSingleOrderAmount=%f", cfg.MaxSingleOrderAmount))
+	log.Println(fmt.Sprintf("WsURL=%s", cfg.WsURL))
+	log.Println(fmt.Sprintf("OrdersNotLendTh=%d", cfg.OrdersNotLendTh))
+	log.Println("=========================================")
 }
