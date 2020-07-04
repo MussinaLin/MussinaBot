@@ -29,8 +29,13 @@ func GenOrders(availableBalance float64, maxSignleOrderAmount float64, minLoan f
 			orders= append(orders, MussinaOrder{Amount:availableBalance, Rate:0, Period:2})
 			availableBalance = 0
 		}else{
-			orders= append(orders, MussinaOrder{Amount:maxSignleOrderAmount, Rate:0, Period:2})
-			availableBalance -= maxSignleOrderAmount
+			if availableBalance - maxSignleOrderAmount < minLoan{ // handle like available balance = 412.
+				orders= append(orders, MussinaOrder{Amount:availableBalance, Rate:0, Period:2})
+				availableBalance = 0
+			}else{
+				orders= append(orders, MussinaOrder{Amount:maxSignleOrderAmount, Rate:0, Period:2})
+				availableBalance -= maxSignleOrderAmount
+			}
 		}
 	}
 	log.Println(fmt.Sprintf("[GenOrders] gen %d orders", len(orders)))
