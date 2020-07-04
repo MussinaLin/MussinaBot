@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-
+var MussinaBotCfg *Config = &Config{}
 
 type Config struct {
 	ApiKey string
@@ -38,9 +38,9 @@ func LoadConfig(envPath... string) (*Config, error){
 	// load .env file
 	var err error = nil
 	if len(envPath) > 0 { //for test case read .env file
-		err = godotenv.Load(envPath[0])
+		err = godotenv.Overload(envPath[0])
 	}else{
-		err = godotenv.Load()
+		err = godotenv.Overload()
 	}
 	if err != nil {
 		return nil, fmt.Errorf("Error loading .env file")
@@ -69,21 +69,20 @@ func LoadConfig(envPath... string) (*Config, error){
 	//WS
 	wsUrl := os.Getenv("bf.ws.url")
 
-	cfg := &Config{}
-	cfg.ApiKey = apiKey
-	cfg.ApiSecret = apiSecret
-	cfg.PubEndpoint = pubEndpoint
-	cfg.MinLoan, _ = strconv.ParseFloat(minLoad, 64)
-	cfg.FrrBias, _ = strconv.ParseFloat(frrBias, 64)
-	cfg.FrrLoanMonthRate, _ = strconv.ParseFloat(frrLoanMonthRate, 64)
-	cfg.FrrIncreaseRate, _ = strconv.ParseFloat(frrIncreaseRate, 64)
-	cfg.FrrCalculatePriorSecs,_ = strconv.Atoi(frrCalculatePriorSecs)
-	cfg.BalanceLeft, _ = strconv.ParseFloat(balanceLeft, 64)
-	cfg.MaxSingleOrderAmount, _ = strconv.ParseFloat(maxSingleOrderAmount, 64)
-	cfg.WsURL = wsUrl
-	cfg.OrdersNotLendTh, _ = strconv.Atoi(ordersNotLendTh)
-	printCfg(cfg)
-	return cfg,nil
+	MussinaBotCfg.ApiKey = apiKey
+	MussinaBotCfg.ApiSecret = apiSecret
+	MussinaBotCfg.PubEndpoint = pubEndpoint
+	MussinaBotCfg.MinLoan, _ = strconv.ParseFloat(minLoad, 64)
+	MussinaBotCfg.FrrBias, _ = strconv.ParseFloat(frrBias, 64)
+	MussinaBotCfg.FrrLoanMonthRate, _ = strconv.ParseFloat(frrLoanMonthRate, 64)
+	MussinaBotCfg.FrrIncreaseRate, _ = strconv.ParseFloat(frrIncreaseRate, 64)
+	MussinaBotCfg.FrrCalculatePriorSecs,_ = strconv.Atoi(frrCalculatePriorSecs)
+	MussinaBotCfg.BalanceLeft, _ = strconv.ParseFloat(balanceLeft, 64)
+	MussinaBotCfg.MaxSingleOrderAmount, _ = strconv.ParseFloat(maxSingleOrderAmount, 64)
+	MussinaBotCfg.WsURL = wsUrl
+	MussinaBotCfg.OrdersNotLendTh, _ = strconv.Atoi(ordersNotLendTh)
+	printCfg(MussinaBotCfg)
+	return MussinaBotCfg,nil
 }
 
 func printCfg(cfg *Config){

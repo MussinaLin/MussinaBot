@@ -71,10 +71,16 @@ func GetEarnedInterest(w http.ResponseWriter, req *http.Request){
 	fmt.Fprintf(w, utils.CnvStruct2Json(resp))
 }
 
-func getApyFromTotalEarned(totalEarned float64, balance float64, days int64) float64{
-	if balance == 0{
-		log.Println("[ERROR] balance is 0")
-		balance = 6738.56
+func ReloadConfig(w http.ResponseWriter, req *http.Request){
+	log.Println("[ReloadConfig...]")
+	cfg, err := utils.LoadConfig()
+	if err != nil{
+		log.Fatalln(err.Error())
+		fmt.Fprintf(w, err.Error())
 	}
+	fmt.Fprintf(w, utils.CnvStruct2Json(*cfg))
+}
+
+func getApyFromTotalEarned(totalEarned float64, balance float64, days int64) float64{
 	return utils.RoundFloat( (totalEarned / balance) * 365 / float64(days))
 }
