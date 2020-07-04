@@ -64,6 +64,7 @@ func startBitfinexWS(cfg *utils.Config){
 		// start ws
 		Bitfinex.StartAvaliableBalanceWS(cfg.ApiKey, cfg.ApiSecret,cfg.WsURL)
 		oneTimeFlag = false
+		time.Sleep(5 * time.Second) // sleep to wait ws update balance
 	}
 }
 
