@@ -26,22 +26,20 @@ func main() {
 	}
 
 	// periodic job
-	//tick := time.NewTicker(time.Second * 6)
-	//go scheduler(tick, cfg)
+	tick := time.NewTicker(time.Second * 60)
+	go scheduler(tick, cfg)
 
 	Bitfinex.SetConfig(cfg.ApiKey, cfg.ApiSecret, cfg.PubEndpoint)
 
-	//Bitfinex.GetActivePositions()
 	// start http server
 	http.StartHttpServer()
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	<-sigs
-	//tick.Stop()
+	tick.Stop()
 	log.Println("Stop timer...")
-	//Bitfinex.CloseWS()
-
+	Bitfinex.CloseWS()
 
 }
 func scheduler(tick *time.Ticker, cfg *utils.Config) {
@@ -80,28 +78,19 @@ func marginFundingLoan(cfg *utils.Config){
 	FRR := Bitfinex.GetFRR(cfg.FrrCalculatePriorSecs, cfg.FrrBias)
 	orders := Bitfinex.GenOrders(availBalance, cfg.MaxSingleOrderAmount, cfg.MinLoan, cfg.BalanceLeft)
 	orders = Bitfinex.AssignRate(FRR, cfg.FrrIncreaseRate, orders)
-	//orders = Bitfinex.ModifyPeriod(orders, cfg.FrrLoanMonthRate)
+	orders = Bitfinex.ModifyPeriod(orders, cfg.FrrLoanMonthRate)
 	//log.Println(orders)
 
 	ordersNoti = Bitfinex.SubmitOrders(orders)
 	submittedOrderCount := len(*ordersNoti)
-	//time.Sleep(300 * time.Millisecond)
 	if submittedOrderCount > 0{
 		log.Println(fmt.Sprintf("submit order count:[%d]", submittedOrderCount))
 		fundingNotLendCount++
 	}else{
 		log.Println(fmt.Sprintf("[ERROR] submit order fail...count:[%d]", submittedOrderCount))
 	}
-	//initOrdersProvidedCount(ordersNoti)
 }
 
-func initOrdersProvidedCount(ordersNoti *[]bitfinex.Notification){
-	log.Println("[initOrdersProvidedCount]...")
-	ordersProvidedCount = make(map[int64]int32)
-	for _, order := range *ordersNoti{
-		ordersProvidedCount[order.MessageID] = 0
-	}
-}
 
 func checkOrderStatus(notLendTh int){
 	log.Println(fmt.Sprintf("[checkOrderStatus] fundingNotLendCount:[%d]",fundingNotLendCount))
