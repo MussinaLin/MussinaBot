@@ -32,10 +32,17 @@ func getTradeHistory(priorSecs int) *bitfinex.TradeSnapshot{
 	millisStart := prior.UnixNano() / 1000000
 	start := bitfinex.Mts(millisStart)
 	end := bitfinex.Mts(millis)
-
-	trades, err := bfRestClient.Trades.PublicHistoryWithQuery("fUSD", start, end, bitfinex.QueryLimitMax, bitfinex.NewestFirst)
-	if err != nil {
-		log.Println("[ERROR] Get trade history... ", err.Error())
+	var trades *bitfinex.TradeSnapshot
+	for{
+		tTrades, err := bfRestClient.Trades.PublicHistoryWithQuery("fUSD", start, end, bitfinex.QueryLimitMax, bitfinex.NewestFirst)
+		if err != nil {
+			log.Println("[ERROR] Get trade history... ", err.Error())
+			time.Sleep(300 * time.Millisecond)
+		}else{
+			trades = tTrades
+			break
+		}
 	}
 	return trades
+
 }
