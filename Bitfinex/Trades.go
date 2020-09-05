@@ -35,7 +35,7 @@ func getTradeHistory(priorSecs int) *bitfinex.TradeSnapshot{
 
 	trades, err := bfRestClient.Trades.PublicHistoryWithQuery("fUSD", start, end, bitfinex.QueryLimitMax, bitfinex.NewestFirst)
 	if err != nil {
-		log.Fatalf("%v", err)
+		log.Println("[ERROR] Get trade history... ", err.Error())
 	}
 	return trades
 }
