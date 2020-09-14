@@ -43,7 +43,7 @@ func GenOrders(availableBalance float64, maxSignleOrderAmount float64, minLoan f
 }
 
 func AssignRate(FRR float64, increaseRate float64, orders *[]MussinaOrder) *[]MussinaOrder{
-	log.Println(fmt.Sprintf("[AssignRate] FRR:%f, increaseRate:%f", FRR, increaseRate))
+	log.Println(fmt.Sprintf("[AssignRate] FRR:%f, increaseRate:%f", FRR * 100, increaseRate))
 	for index, _ := range *orders{
 		(*orders)[index].Rate = FRR + FRR * increaseRate * 0.01 * float64(index)
 	}
@@ -54,11 +54,11 @@ func ModifyPeriod(orders *[]MussinaOrder, loan30DaysRate float64) *[]MussinaOrde
 	log.Println("[ModifyPeriod]...")
 	for index, _ := range *orders{
 		rate := (*orders)[index].Rate
-		annualRate := rate * 365
+		annualRate := rate * 100 * 365
 		if annualRate > loan30DaysRate{
 			(*orders)[index].Period = 30
 			log.Println(fmt.Sprintf("[ModifyPeriod] amount:[%f] rate:[%f] change period to 30.",
-				(*orders)[index].Amount, (*orders)[index].Rate))
+				(*orders)[index].Amount, (*orders)[index].Rate * 100))
 		}
 	}
 	return orders
@@ -72,7 +72,7 @@ func SubmitOrders(orders *[]MussinaOrder) *[]bitfinex.Notification{
 			Type:"LIMIT",
 			Symbol:"fUSD",
 			Amount:order.Amount,
-			Rate:order.Rate * 0.01,  // bitfinex rate is raw data. ex: 0.036 % ---> 0.00036
+			Rate:order.Rate,  // bitfinex rate is raw data. ex: 0.036 % ---> 0.00036
 			Period:order.Period,
 			Hidden:false,
 		})

@@ -39,7 +39,7 @@ func GetApyFromDailyInterest(balance float64, earned float64) float64{
 		log.Println("[ERROR] balance is 0")
 		balance = 6738.56
 	}
-	return CnvDailyRate2AnnualRate((earned / balance) * 100)
+	return CnvDailyRate2AnnualRate(earned / balance)
 }
 
 func EnableCors(w *http.ResponseWriter) {

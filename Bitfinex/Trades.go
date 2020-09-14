@@ -18,9 +18,9 @@ func GetFRR(priorSecs int, frrBias float64) float64{
 		FRR += trade.Price
 	}
 	FRR = FRR / float64(size)
-	FRR = FRR * 100  // conv to %
+	//FRR = FRR * 100  // conv to %
 	FRR = FRR + FRR * frrBias * 0.01
-	FRR = math.Ceil(FRR*1000000) / 1000000
+	FRR = math.Ceil(FRR*100000000) / 100000000
 	log.Println("FRR:",FRR)
 	return FRR
 }
