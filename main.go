@@ -2,7 +2,7 @@ package main
 
 import (
 	"MussinaBot/Bitfinex"
-	"MussinaBot/http"
+	"MussinaBot/httputil"
 	"MussinaBot/utils"
 	"fmt"
 	"github.com/bitfinexcom/bitfinex-api-go/v2"
@@ -33,8 +33,8 @@ func main() {
 	tick := time.NewTicker(time.Second * 60)
 	go scheduler(tick, cfg)
 
-	// start http server
-	http.StartHttpServer()
+	// start httputil server
+	httputil.StartHttpServer()
 
 	waitAndClose(tick)
 }

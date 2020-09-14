@@ -1,4 +1,4 @@
-package http
+package httputil
 
 import (
 	"MussinaBot/api"
@@ -23,7 +23,7 @@ func NewHttpServer() *HttpServer{
 
 func StartHttpServer(){
 	log.Println("[StartHttpServer...]")
-	//httpServer := &http.Server{
+	//httpServer := &httputil.Server{
 	//	Addr:    addr,
 	//	Handler: nil,
 	//}
@@ -36,3 +36,8 @@ func StartHttpServer(){
 		http.ListenAndServe(":8090", nil)
 	}()
 }
+
+func EnableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+

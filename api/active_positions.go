@@ -2,6 +2,7 @@ package api
 
 import (
 	"MussinaBot/Bitfinex"
+	"MussinaBot/httputil"
 	"MussinaBot/utils"
 	"fmt"
 	"log"
@@ -22,6 +23,7 @@ type ProvideFunds struct{
 }
 func GetProvideFunds(w http.ResponseWriter, req *http.Request){
 	log.Println("[GetProvideFunds...]")
+	httputil.EnableCors(&w)
 	creditsSnap := Bitfinex.GetActivePositions()
 	credits := creditsSnap.Snapshot
 	log.Println("Provided funds size:", len(credits))
