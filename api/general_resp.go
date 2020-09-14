@@ -2,7 +2,6 @@ package api
 
 import (
 	"MussinaBot/Bitfinex"
-	"MussinaBot/httputil"
 	"MussinaBot/utils"
 	"fmt"
 	"log"
@@ -32,7 +31,7 @@ type DailyInterest struct {
 
 func GetGeneralResp(w http.ResponseWriter, req *http.Request){
 	log.Println("[GetGeneralResp...]")
-	httputil.EnableCors(&w)
+	utils.EnableCors(&w)
 	resp := GeneralResp{}
 	resp.TotalBalance = Bitfinex.GetTotalBalance()
 	resp.AvailableBalance = Bitfinex.GetAvailableBalance()
@@ -43,7 +42,7 @@ func GetGeneralResp(w http.ResponseWriter, req *http.Request){
 
 func GetEarnedInterest(w http.ResponseWriter, req *http.Request){
 	log.Println("[GetEarnedInterest...]")
-	httputil.EnableCors(&w)
+	utils.EnableCors(&w)
 	now := time.Now().Unix()
 	s := int64(86400 * 500) // the day before 500 days. 500 is max_limit of ledgers count.
 	start := now - s
@@ -76,7 +75,7 @@ func GetEarnedInterest(w http.ResponseWriter, req *http.Request){
 
 func ReloadConfig(w http.ResponseWriter, req *http.Request){
 	log.Println("[ReloadConfig...]")
-	httputil.EnableCors(&w)
+	utils.EnableCors(&w)
 	cfg, err := utils.LoadConfig()
 	if err != nil{
 		log.Fatalln(err.Error())

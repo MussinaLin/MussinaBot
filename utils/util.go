@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"net/http"
 	"time"
 )
 
@@ -39,4 +40,8 @@ func GetApyFromDailyInterest(balance float64, earned float64) float64{
 		balance = 6738.56
 	}
 	return CnvDailyRate2AnnualRate((earned / balance) * 100)
+}
+
+func EnableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }
